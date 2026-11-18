@@ -6,21 +6,31 @@ DeepSeek Harness 的「进展更新」：`progress_update` 工具、系统提示
 
 ## 安装
 
-从 GitHub 直接装（npm 会跑 `prepare` 就地构建 `lib/`）：
-
-```
-dsh plugin --profile <profile> add github:xincy22/dsh-progress-updates
-```
-
-或者先把仓库 clone 下来，用 `file:` 前缀装本地副本：
+仓库里不放构建产物（`lib/` 在 `.gitignore` 里），所以先从源码构建，再用 `file:` 装本地副本：
 
 ```
 git clone https://github.com/xincy22/dsh-progress-updates.git
-cd dsh-progress-updates && npm install
+cd dsh-progress-updates
+npm install
+npm run build
 dsh plugin --profile <profile> add file:$PWD
 ```
 
-装完重启对应的 profile。设置在「设置 → 进展更新」。
+也可以让 pnpm 从 git 拉取并就地构建：
+
+```
+dsh plugin --profile <profile> add git+https://github.com/xincy22/dsh-progress-updates.git
+```
+
+这条会先被 pnpm 拦一次：git 依赖要执行 `prepare` 构建脚本，需先把它加进 profile 的
+`pnpm-workspace.yaml`。报错信息里会打印需要粘贴的确切键，形如：
+
+```yaml
+allowBuilds:
+  dsh-progress-updates@https://codeload.github.com/xincy22/dsh-progress-updates/tar.gz/<commit>: true
+```
+
+加完再跑一次同样的 `add`。装完重启对应的 profile，设置在「设置 → 进展更新」。
 
 ## 开发
 
@@ -35,7 +45,7 @@ npm run typecheck
 
 原包 `@eddyskywalker/dsh-chatgpt-subscription` 也注册同名工具 `progress_update` 和同一个提示词分节。两者不要同时启用。
 
-## 与原版的差异（0.0.2）
+## 与原版的差异
 
 - **设置卡只保留五行**：总开关、催促提醒、催促阈值、输出语言、打开面板。原版那张卡里还挂着缓存预热、检索投影、等待续热、账号缓存亲和、计划模式管线、调度执行守卫、工具失控治理、智能体团队策略段、媒体工具等开关，它们写的是原包核心行的 Config；本包的 Config 只声明四个字段，那些开关搬过来也写不进去，因此没有随进度模块一起剥离。
 - `peerDependencies` 收窄到实际验证过的范围：`@deepseek-ai/*` 为 `^0.2.2-rc.1`、`cordis` 为 `^4.1.0`、`schemastery` 为 `^3.19.0`。原版那份一直列到 `0.1.2-alpha.5`，属于没有验证过的承诺。
