@@ -1,0 +1,9 @@
+# 进展更新行。派生自 @eddyskywalker/dsh-chatgpt-subscription 0.71.0，独立成包。
+# config 的默认值与原版核心行一致；profile 层按 id 覆盖即可。
+- insert:
+    - id: dsh-progress-updates
+      name: dsh-progress-updates
+      config:
+        progressUpdates: true
+        progressUpdatesNudgeThreshold: 8
+        progressUpdatesLanguage: auto
